@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rune Slots — Connection Atelier</title>
+<style>
+:root{color-scheme:dark;--gold:#cbb078;--ink:#e8dfcb;--muted:#a89e8b;--border:#504433}*{box-sizing:border-box}body{margin:0;background:#10110f;color:var(--ink);font:15px/1.5 'Segoe UI',sans-serif}button,input{font:inherit}button{cursor:pointer;color:inherit}button:focus-visible,input:focus-visible{outline:2px solid #f5d79e;outline-offset:4px}header{max-width:1200px;margin:auto;padding:28px 30px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:20px}h1{font:32px Georgia,serif;margin:0;color:#edd8ae}small,.eyebrow{color:var(--muted);font-size:11px;letter-spacing:2px;text-transform:uppercase}.subtitle{color:var(--muted);margin:5px 0 0}main{max-width:1200px;margin:auto;padding:28px 30px;display:grid;grid-template-columns:minmax(320px,1fr) 320px;gap:30px}.board-wrap{position:relative;background:#151a18;border:1px solid #424945;box-shadow:0 14px 50px #0004;padding:14px}.board-wrap:before,.board-wrap:after{content:'◆';position:absolute;color:var(--gold);top:-12px;font-size:18px}.board-wrap:before{left:18px}.board-wrap:after{right:18px}svg.board{display:block;width:100%;max-height:730px;aspect-ratio:640/700}.etched{fill:none;stroke:#826542;opacity:.28}.track{fill:none;stroke:#242d28;stroke-width:18;stroke-linejoin:round;stroke-linecap:round}.track-edge{fill:none;stroke:#48534b;stroke-width:22;stroke-linejoin:round;stroke-linecap:round;opacity:.65}.path{fill:none;stroke:var(--path-color);stroke-width:3;stroke-linejoin:round;stroke-linecap:round;opacity:.85;pointer-events:none;transition:opacity .2s,stroke-width .2s}.path.off{opacity:0}.path.focus{stroke-width:5}.slot{cursor:pointer;outline:none}.slot .rim{fill:url(#socket);stroke:#77877a;stroke-width:3}.slot.selected .rim,.slot:focus-visible .rim{stroke:#ffe3a0;stroke-width:5;filter:url(#glow)}.slot:hover .rim{stroke:#e2c48b}.slot text{fill:#bfb098;font:11px 'Segoe UI',sans-serif;letter-spacing:1.5px;pointer-events:none}.gem{filter:url(#glow);pointer-events:none}.board-caption{text-align:center;color:var(--muted);font-size:12px;margin:0 0 10px}h2{font:22px Georgia,serif;margin:0 0 15px;color:#e0ca9f}aside section{border-bottom:1px solid var(--border);padding-bottom:22px;margin-bottom:22px}.connection{display:grid;grid-template-columns:24px 1fr auto;align-items:center;gap:9px;margin:4px 0;padding:9px 8px;background:transparent;border:1px solid transparent;border-radius:3px;width:100%;text-align:left}.connection:hover{background:#25251f}.connection.active{border-color:#766041;background:#25231b}.connection .icon{width:22px;height:22px;fill:none;stroke:var(--c);stroke-width:1.5}.connection input{accent-color:var(--c);width:18px;height:18px;cursor:pointer}.route{display:block;color:var(--muted);font-size:11px;margin-top:3px}.palette{display:flex;gap:9px}.swatch{width:48px;height:48px;border:1px solid var(--border);border-radius:4px;background:#1c1e1a;padding:7px}.swatch.chosen{border-color:#f5d79e;background:#393225}.swatch svg{width:100%;height:100%}.selected-label{color:var(--muted);font-size:12px;margin:-8px 0 14px}.level{display:flex;justify-content:space-between;align-items:center;margin-top:18px}.level input{width:72px;background:#1c1e1a;color:var(--ink);border:1px solid #66543b;padding:6px 8px}button.action{background:#2f291f;border:1px solid #75603f;border-radius:3px;padding:9px 14px;min-height:44px}button.action:hover{background:#443624}button:disabled{opacity:.45;cursor:not-allowed}.actions{display:flex;gap:8px;flex-wrap:wrap}.note{color:var(--muted);font-size:12px;margin:14px 0 0}.status{color:#d6bf90;font-size:12px;min-height:20px;margin:12px 0 0}.footer{max-width:1200px;margin:auto;padding:0 30px 30px;color:#716e60;font-size:12px}@media(max-width:760px){header{padding:20px;align-items:flex-start}header small{display:none}main{grid-template-columns:1fr;padding:20px;gap:24px}h1{font-size:28px}aside{display:grid;grid-template-columns:1fr 1fr;gap:20px}aside section{margin:0}.utility{grid-column:1/-1}.board-wrap{padding:4px}.footer{padding:20px}}@media(max-width:450px){aside{display:block}aside section{margin-bottom:20px}main{padding:12px}header{padding:20px 12px}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+dialog{color:#e8dfcb;background:#19211c;border:1px solid #748478;border-radius:8px;padding:24px;width:min(360px,calc(100vw - 32px));box-shadow:0 20px 80px #0009}dialog::backdrop{background:#0009}dialog h2{margin-bottom:8px}dialog .palette{margin:20px 0;justify-content:space-between}dialog .swatch{width:86px;height:86px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:4px}dialog .swatch svg{width:42px;height:42px}dialog .swatch span{font-size:12px;text-transform:capitalize}dialog .picker-actions{display:flex;gap:10px;justify-content:space-between}
+
+/* Definition editor | rune board | active effects */
+header,.footer{max-width:1600px}
+main{max-width:1600px;grid-template-columns:280px minmax(320px,1fr) 270px;gap:24px;padding:28px 24px;align-items:start}
+main>aside{min-width:0;display:block}
+main>.board-wrap{min-width:0;align-self:start;padding:8px}
+main>aside section:last-child{border-bottom:0}
+.board-caption{padding:0 12px;line-height:1.6}
+@media(min-width:1001px){.definition-column{grid-column:1}.board-wrap{grid-column:2}.effects-column{grid-column:3}}
+@media(max-width:1000px){main{grid-template-columns:240px minmax(320px,1fr);gap:20px}.definition-column{grid-column:1;grid-row:1}.board-wrap{grid-column:2;grid-row:1}.effects-column{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.effects-column .utility{grid-column:auto}}
+@media(max-width:700px){main{display:flex;flex-direction:column;padding:16px 12px;gap:22px}main>.board-wrap{order:0;width:100%}main>.definition-column{order:1;width:100%}main>.effects-column{order:2;display:block;width:100%}main>aside section{margin-bottom:20px;padding-bottom:20px}header{padding:20px 12px}}
+
+/* Compact laptop workspace */
+header{padding:12px 24px;min-height:58px}header h1{font-size:25px;line-height:1.2}header .eyebrow,header .subtitle{display:none}header small{font-size:10px}h2{font-size:20px;margin-bottom:12px}
+main{padding:16px 24px;grid-template-columns:260px minmax(300px,1fr) 320px;gap:20px}
+.footer{display:none}
+.board-wrap svg.board{height:min(460px,calc(100dvh - 180px));width:auto;max-width:100%;margin:0 auto;aspect-ratio:640/700}
+.board-caption{font-size:11px;margin:4px 0 8px}
+.board-tools{padding:10px 8px 0;border-top:1px solid #424945}.board-tools>.actions{align-items:center;justify-content:center}.board-tools .status{margin:6px 0 0;text-align:center;font-size:11px;min-height:16px}.rune-settings{position:relative;font-size:12px}.rune-settings summary{cursor:pointer;padding:8px;border:1px solid #657166;border-radius:3px;min-height:36px}.settings-content{position:absolute;z-index:2;bottom:44px;right:0;width:230px;padding:18px;background:#19211c;border:1px solid #748478;box-shadow:0 10px 40px #0008}.settings-content .selected-label{margin:0 0 12px}.settings-content #remove{margin-top:12px;width:100%}
+.combo-panel select{margin:5px 0 10px!important;padding:7px!important;font-size:13px}.combo-panel label{font-size:12px}.combo-panel #combo-slots>div{padding:4px 0!important}.combo-panel #combo-summary{font-size:12px;margin:10px 0}.combo-panel #combo-effect{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin-top:6px}.combo-panel #effect-description{margin:6px 0!important;font-size:13px;height:80px;min-height:80px}.combo-panel label[for=effect-description]{margin-top:10px!important}.combo-panel #definition-status{font-size:11px;line-height:1.4;margin:8px 0;min-height:16px}.combo-panel>p.note:last-child{display:none}.combo-panel{padding-bottom:0;margin-bottom:0}
+.effects-column>section{margin:0;padding:0;border:0}.effects-column>section>p.note{display:none}
+.active-combo{padding:6px 0!important}.effect-top{display:flex;align-items:center;justify-content:space-between;gap:6px}.combo-pattern-name{font-size:12px!important;line-height:1.35;min-width:0}.combo-rune-shapes{gap:3px!important;margin:0!important;flex-wrap:nowrap!important;flex-shrink:0}.combo-rune-shapes [data-rune-color]{gap:2px!important}.combo-rune-shapes [data-rune-icon]{width:24px!important;height:24px!important}.combo-rune-shapes svg{width:21px;height:21px}.effect-preview{font-size:12px;line-height:1.4;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin:4px 0!important}.effect-bottom{display:flex;align-items:center;gap:8px}.effect-bottom .note{font-size:10px;margin:0!important;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;flex:1;min-width:0}.effect-details{background:none;border:0;text-decoration:underline;text-underline-offset:3px;font-size:11px;color:#d5d5c6;padding:3px 0;flex-shrink:0;min-height:24px}
+#effect-dialog{width:min(560px,calc(100vw - 32px));max-height:85dvh;overflow:auto}#effect-dialog h2{font-size:20px;line-height:1.4}#effect-full-text{font-size:14px}
+@media(min-width:1001px){button.action{padding:7px 10px;min-height:36px;font-size:12px}}
+@media(max-width:1000px){main{grid-template-columns:240px minmax(300px,1fr)}.effects-column{display:block;grid-column:1/-1}.board-wrap svg.board{height:420px;max-width:100%}#active-effects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px}}
+@media(max-width:700px){header{padding:12px}main{display:flex;padding:12px}.board-wrap svg.board{height:auto;width:100%;max-width:400px;max-height:430px}#active-effects{display:block}.effect-details{min-height:44px;padding:8px}.rune-settings summary{min-height:44px}.board-tools .action{min-height:44px}.combo-panel>p.note:last-child{display:block}}
+</style></head><body>
+<header><div><div class="eyebrow">Connection atelier</div><h1>Rune Slots</h1><p class="subtitle">Seven sockets. Five paths. Your configuration.</p></div><small>Interactive board · offline ready</small></header>
+<main><aside class="definition-column" aria-label="Combo definitions"><section class="combo-panel"><h2>Combo definition</h2><label for="class-select">Character class</label><select id="class-select" style="display:block;width:100%;margin:8px 0 14px;padding:9px;background:#1b211e;color:#e8dfcb;border:1px solid #657166"><option value="magicGladiator">Magic Gladiator</option><option value="bladeKnight">Blade Knight</option><option value="darkWizard">Dark Wizard</option><option value="elf">Elf</option><option value="shared">Shared / all classes</option></select><label for="combo-select">Inspect a connection’s rune pattern</label><select id="combo-select" style="display:block;width:100%;margin:8px 0 14px;padding:9px;background:#24221c;color:#e8dfcb;border:1px solid #75603f"><option value="outer">Outer circle</option><option value="inner">Inner circle</option><option value="triangle">Triangle</option><option value="vertical">Vertical line</option><option value="inverted-t">Inverted T</option></select><div id="combo-slots"></div><p id="combo-summary" style="color:#e0ca9f"></p><h3 style="font-size:14px;margin-bottom:4px">Effect / bonus</h3><p class="note" id="combo-effect" style="white-space:pre-wrap;overflow-wrap:anywhere">Not defined — game bonus rules are needed.</p><label for="effect-description" style="display:block;margin-top:15px;font-size:12px">Class skill upgrade / effect description</label><textarea id="effect-description" rows="3" maxlength="20000" placeholder="Describe this class’s upgraded skill for the selected combo" style="display:block;width:100%;margin:8px 0;padding:10px;background:#1b211e;color:#e8dfcb;border:1px solid #657166;border-radius:3px;resize:vertical;font:inherit"></textarea><div class="actions"><button class="action" id="save-definition">Save definition</button><button class="action" id="delete-definition">Delete definition</button></div><p id="definition-status" class="status" role="status" aria-live="polite"></p><button class="action" id="open-catalog" style="width:100%">Class combo library</button><p class="note">Definitions match class + three rune colors on ANY completed connection. The connection selector only chooses which pattern to inspect or edit. Rune order is ignored. All definitions apply to Level 1 runes. Shared stays a separate category.</p></section></aside><div class="board-wrap"><svg class="board" viewBox="0 0 640 700" aria-label="Interactive seven-slot rune board"><defs><radialGradient id="socket"><stop stop-color="#25291d"/><stop offset=".75" stop-color="#0e120f"/><stop offset="1" stop-color="#352b1d"/></radialGradient><filter id="glow" filterUnits="userSpaceOnUse" x="-100" y="-100" width="840" height="900"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g id="tracks"></g><g id="paths"></g><g id="slots"></g></svg><p class="board-caption">Click any socket to choose its rune color · All five connections are always available</p><div class="board-tools"><div class="actions"><button class="action" id="reset">Reset board</button><button class="action" id="export">Export JSON</button><details class="rune-settings"><summary>Rune settings</summary><div class="settings-content"><div id="selection" class="selected-label"></div><div class="palette" id="palette"></div><label class="level">Rune level <input id="level" type="number" min="1" max="1" value="1" readonly aria-label="Rune level fixed at 1"></label><button class="action" id="remove">Clear selected socket</button></div></details></div><p class="status" id="status" role="status" aria-live="polite"></p></div></div><aside class="effects-column" aria-label="Active effects and board controls"><section><h2>Active combo effects</h2><div id="active-effects"></div><p class="note">A connection is complete when all three sockets have runes. The same effect is listed once with every matching connection. All five connection paths are permanently enabled.</p></section></aside></main><div class="footer">An original web interpretation of your reference layout.</div>
+<dialog id="slot-picker" aria-labelledby="picker-title"><h2 id="picker-title">Choose rune color</h2><p id="picker-slot" class="selected-label" style="margin:0"></p><div class="palette" id="picker-colors"></div><div class="picker-actions"><button class="action" id="picker-clear">Clear rune</button><button class="action" id="picker-close">Cancel</button></div></dialog>
+<dialog id="effect-dialog" aria-labelledby="effect-title"><h2 id="effect-title"></h2><p id="effect-full-text" style="white-space:pre-wrap;overflow-wrap:anywhere"></p><p class="note" id="effect-connections"></p><button class="action" id="effect-close">Close</button></dialog>
+<dialog id="catalog-dialog" aria-labelledby="catalog-title" style="width:min(720px,calc(100vw - 32px));max-height:85dvh;overflow:auto"><h2 id="catalog-title"></h2><div id="catalog-content"></div><button class="action" id="catalog-close" style="margin-top:16px">Close</button></dialog>
+<script>
+'use strict';
+const NS='http://www.w3.org/2000/svg';
+const sockets=[{id:'top',name:'Top',x:320,y:100},{id:'inner-left',name:'Inner left',x:195,y:270},{id:'inner-right',name:'Inner right',x:445,y:270},{id:'center',name:'Center',x:320,y:390},{id:'bottom',name:'Bottom inner',x:320,y:570},{id:'outer-left',name:'Lower left',x:100,y:590},{id:'outer-right',name:'Lower right',x:540,y:590}];
+const connections=[
+{id:'outer',name:'Outer circle',color:'#d5d5c6',slots:['top','outer-left','outer-right'],route:'Top · lower left · lower right',d:'M100 590 A294.387755 294.387755 0 0 1 320 100 A294.387755 294.387755 0 0 1 540 590',icon:'M3 19 A10 10 0 1 1 19 19'},
+{id:'inner',name:'Inner circle',color:'#d5dbbc',slots:['inner-left','inner-right','bottom'],route:'Inner left · inner right · bottom inner',d:'M195 270 A176.041667 176.041667 0 0 0 320 570 A176.041667 176.041667 0 0 0 445 270',icon:'M5 5 A8 8 0 1 0 17 5'},
+{id:'triangle',name:'Triangle',color:'#78dcb1',slots:['center','outer-left','outer-right'],route:'Center · lower left · lower right',d:'M100 590 L320 390 L540 590',icon:'M2 19 L11 3 L20 19'},
+{id:'vertical',name:'Vertical line',color:'#83c8f2',slots:['top','center','bottom'],route:'Top · center · bottom inner',d:'M320 100 L320 570',icon:'M11 2 V20'},
+{id:'inverted-t',name:'Inverted T',color:'#e8a1d3',slots:['inner-left','center','inner-right'],route:'Inner left · center · inner right',d:'M195 270 L320 390 L445 270',icon:'M2 5 L11 17 L20 5'}];
+const colors={blue:'#83d4ff',green:'#80efb2',red:'#ff8b73'};
+const characterClasses={magicGladiator:'Magic Gladiator',bladeKnight:'Blade Knight',darkWizard:'Dark Wizard',elf:'Elf',shared:'Shared / all classes'};
+const classComboCatalog={magicGladiator:[
+  {
+    "colors": [
+      "red",
+      "red",
+      "green"
+    ],
+    "name": "Fire Slash Enhancement",
+    "description": "When a target’s HP falls below 50%, damage increases, up to 10.75%."
+  },
+  {
+    "colors": [
+      "green",
+      "green",
+      "blue"
+    ],
+    "name": "Ice Vulnerability",
+    "description": "When Ice Slow is active on a target, Skill DMG dealt to them is increased by 6.4%."
+  },
+  {
+    "colors": [
+      "blue",
+      "blue",
+      "green"
+    ],
+    "name": "Piercing Strike",
+    "description": "Every 8s, skill deals 5.38% of target’s HP as skill damage."
+  },
+  {
+    "colors": [
+      "red",
+      "red",
+      "blue"
+    ],
+    "name": "Flame Strike Enhancement",
+    "description": "Flame Strike DMG +1.25%, additional effect increases by 5%."
+  },
+  {
+    "colors": [
+      "blue",
+      "blue",
+      "red"
+    ],
+    "name": "Crippling Vulnerability",
+    "description": "Against impaired targets, Excellent Damage chance +2.91%."
+  },
+  {
+    "colors": [
+      "green",
+      "green",
+      "green"
+    ],
+    "name": "Breath of Revival",
+    "description": "Restores 3.36% of Max HP every 5s."
+  },
+  {
+    "colors": [
+      "green",
+      "green",
+      "red"
+    ],
+    "name": "Aqua Beam Enhancement",
+    "description": "When Aqua Beam triggers an Ultra Excellent Strike, increases Ice Slow effect by 2.96%, and duration by 2.5s (max 3… — ending cut off in the supplied image)."
+  },
+  {
+    "colors": [
+      "red",
+      "red",
+      "red"
+    ],
+    "name": "Power Slash",
+    "description": "Skill DMG +1.76%. If only one target is hit, effect increases by an additional 0.88%."
+  },
+  {
+    "colors": [
+      "blue",
+      "green",
+      "red"
+    ],
+    "name": "Combat Mastery",
+    "description": "All Skill Damage +1.28%."
+  }
+]};
+const classComboNotes={magicGladiator:[
+'Level 1 descriptions transcribed from your supplied combination table. Fire Slash Enhancement appeared twice (Outer and Triangle), so it is one color-combo definition.',
+'Three blue runes: skill name is #N/A and no effect is supplied. No upgraded effect is assigned.',
+'Swift Guard: after Gigantic Storm, dealing damage grants a shield equal to 5% of your max HP for 8s. Boosts Attack Speed by 2.24% while the shield is active. Its combination is #N/A, so this is an unmapped note and does not activate automatically.',
+'Aqua Beam Enhancement: the screenshot is cut off after “max 3”; the missing ending has not been guessed.'
+]};
+const builtInDefinitions={};for(const [cls,entries] of Object.entries(classComboCatalog)){for(const entry of entries){const key=cls+'|'+entry.colors.slice().sort().join(',');builtInDefinitions[key]=entry.name+'\n'+entry.description;}}
+let disabledDefinitions=new Set();try{const stored=JSON.parse(localStorage.getItem('rune-disabled-definitions-v1'));if(Array.isArray(stored))disabledDefinitions=new Set(stored.filter(key=>typeof key==='string'&&Object.hasOwn(builtInDefinitions,key)));}catch(e){}
+let activeClass='magicGladiator';try{const storedClass=localStorage.getItem('rune-class-v1');if(Object.hasOwn(characterClasses,storedClass))activeClass=storedClass;}catch(e){}
+let comboDefinitions={};try{
+ const stored=JSON.parse(localStorage.getItem('rune-combo-definitions-v1'));
+ if(stored&&typeof stored==='object'&&!Array.isArray(stored)){
+  for(const [oldKey,value] of Object.entries(stored)){
+   if(typeof value!=='string'||value.length>20000)continue;
+   const parts=oldKey.split('|');let cls,pattern;
+   if(parts.length===3&&Object.hasOwn(characterClasses,parts[0])&&connections.some(c=>c.id===parts[1])){cls=parts[0];pattern=parts[2];}
+   else if(parts.length===2&&Object.hasOwn(characterClasses,parts[0])){cls=parts[0];pattern=parts[1];}
+   else if(parts.length===2&&connections.some(c=>c.id===parts[0])){cls='shared';pattern=parts[1];}
+   else continue;
+   const list=pattern.split(',');if(list.length!==3||!list.every(color=>Object.hasOwn(colors,color)))continue;
+   const key=cls+'|'+list.sort().join(',');
+   if(!Object.hasOwn(comboDefinitions,key))comboDefinitions[key]=value;
+   else if(comboDefinitions[key]!==value){const label=parts.length===3?connections.find(c=>c.id===parts[1]).name:oldKey;comboDefinitions[key]+='\n\n[Also saved for '+label+']\n'+value;}
+  }
+ }
+}catch(e){}
+for(const [key,text] of Object.entries(builtInDefinitions)){if(!disabledDefinitions.has(key)&&!Object.hasOwn(comboDefinitions,key))comboDefinitions[key]=text;}
+function connectionKey(c){const list=c.slots.map(id=>state.runes[id].color);return list.every(Boolean)?activeClass+'|'+list.sort().join(','):null;}
+function definitionKey(){return connectionKey(connections.find(c=>c.id===document.getElementById('combo-select').value));}
+function saveDefinitions(){try{localStorage.setItem('rune-combo-definitions-v1',JSON.stringify(comboDefinitions));localStorage.setItem('rune-disabled-definitions-v1',JSON.stringify([...disabledDefinitions]));return true;}catch(e){return false;}}
+
+const initial=()=>({version:1,selected:'center',visible:connections.map(c=>c.id),runes:Object.fromEntries(sockets.map(s=>[s.id,{color:['center','outer-left','outer-right'].includes(s.id)?'green':s.id==='bottom'?'red':'blue',level:1}]))});
+let state=initial();try{const saved=JSON.parse(localStorage.getItem('rune-slots-v1'));if(saved&&saved.version===1&&sockets.every(s=>saved.runes&&saved.runes[s.id]&&(saved.runes[s.id].color===null||colors[saved.runes[s.id].color])&&Number.isInteger(saved.runes[s.id].level)&&saved.runes[s.id].level>=1&&saved.runes[s.id].level<=12)&&sockets.some(s=>s.id===saved.selected)&&Array.isArray(saved.visible)&&saved.visible.every(id=>connections.some(c=>c.id===id)))state=saved;}catch(e){}
+function persist(){try{localStorage.setItem('rune-slots-v1',JSON.stringify(state));document.getElementById('status').textContent='Saved locally.';}catch(e){document.getElementById('status').textContent='Browser storage unavailable; export to keep your board.';}}
+function gem(color){return `<path d="M0 -29 L7 -13 L21 -21 L14 -6 L28 0 L13 7 L17 23 L4 15 L0 32 L-7 14 L-22 20 L-14 5 L-29 0 L-13 -7 L-19 -22 L-5 -14 Z" fill="${color}" fill-opacity=".65" stroke="${color}" stroke-width="1.5"/><path d="M0 -18 L16 0 L0 18 L-16 0 Z M0 -18 V18 M-16 0 H16 M-10 -10 L10 10 M10 -10 L-10 10" fill="none" stroke="#e5fff5" stroke-opacity=".8" stroke-width="1.1"/>`;}
+function render(){for(const rune of Object.values(state.runes))rune.level=1;state.visible=connections.map(c=>c.id);document.getElementById('tracks').innerHTML=connections.map(c=>`<path class="track-edge" d="${c.d}"/><path class="track" d="${c.d}"/>`).join('');document.getElementById('paths').innerHTML=connections.map(c=>`<path id="path-${c.id}" class="path" style="--path-color:${c.color}" d="${c.d}"/>`).join('');document.getElementById('slots').innerHTML=sockets.map(s=>{const r=state.runes[s.id];return `<g class="slot ${state.selected===s.id?'selected':''}" role="button" tabindex="0" aria-label="${s.name}, ${r.color||'empty'} rune${r.color?', level '+r.level:''}" data-slot="${s.id}" transform="translate(${s.x} ${s.y})"><circle class="rim" r="47"/><circle r="40" fill="none" stroke="#695c3c" opacity=".4"/>${r.color?`<g class="gem">${gem(colors[r.color])}</g><text text-anchor="middle" y="38">${r.level}</text>`:'<text text-anchor="middle" y="4">EMPTY</text>'}<text text-anchor="middle" y="67">${s.name.toUpperCase()}</text></g>`;}).join('');const r=state.runes[state.selected];document.getElementById('selection').textContent=sockets.find(s=>s.id===state.selected).name+' socket';document.getElementById('level').value=r.level;document.getElementById('palette').innerHTML=Object.entries(colors).map(([name,color])=>`<button class="swatch ${r.color===name?'chosen':''}" data-color="${name}" aria-label="Inlay ${name} rune" aria-pressed="${r.color===name}"><svg viewBox="-35 -35 70 70">${gem(color)}</svg></button>`).join('');renderCombo();renderSlotPicker();}
+document.addEventListener('click',e=>{const slot=e.target.closest('[data-slot]'),swatch=e.target.closest('[data-color]');if(slot){state.selected=slot.dataset.slot;render();persist();document.getElementById('slot-picker').showModal();}if(swatch){state.runes[state.selected].color=swatch.dataset.color;render();persist();document.getElementById('slot-picker').close();}});
+document.addEventListener('keydown',e=>{const slot=e.target.closest('[data-slot]');if(slot&&(e.key==='Enter'||e.key===' ')){e.preventDefault();state.selected=slot.dataset.slot;render();persist();document.getElementById('slot-picker').showModal();}});
+
+document.getElementById('level').addEventListener('change',()=>{render();persist();});
+document.getElementById('remove').onclick=()=>{state.runes[state.selected].color=null;render();persist();};document.getElementById('reset').onclick=()=>{if(confirm('Reset the rune colors? All runes remain Level 1 and your saved combo definitions will be kept.')){state=initial();render();persist();}};
+document.getElementById('export').onclick=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify({...state,activeClass,comboDefinitions,disabledDefinitions:[...disabledDefinitions]},null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='rune-board.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);document.getElementById('status').textContent='Board configuration exported.';};
+function renderSlotPicker(){
+ const r=state.runes[state.selected],s=sockets.find(s=>s.id===state.selected);
+ document.getElementById('picker-slot').textContent=s.name+' socket · '+(r.color?r.color+' rune · Level 1':'empty');
+ document.getElementById('picker-colors').innerHTML=Object.entries(colors).map(([name,color])=>`<button class="swatch ${r.color===name?'chosen':''}" data-color="${name}" aria-label="Choose ${name} rune" aria-pressed="${r.color===name}"><svg viewBox="-35 -35 70 70">${gem(color)}</svg><span>${name}</span></button>`).join('');
+}
+document.getElementById('picker-close').onclick=()=>document.getElementById('slot-picker').close();
+document.getElementById('picker-clear').onclick=()=>{state.runes[state.selected].color=null;render();persist();document.getElementById('slot-picker').close();};
+document.getElementById('slot-picker').addEventListener('click',e=>{if(e.target===e.currentTarget){const b=e.currentTarget.getBoundingClientRect();if(e.clientX<b.left||e.clientX>b.right||e.clientY<b.top||e.clientY>b.bottom)e.currentTarget.close();}});
+document.getElementById('effect-close').onclick=()=>document.getElementById('effect-dialog').close();
+function sortedRuneCounts(list){
+ const counts={};list.forEach(color=>{color=color||'empty';counts[color]=(counts[color]||0)+1;});
+ const order=['blue','green','red','empty'];
+ return Object.entries(counts).sort((a,b)=>b[1]-a[1]||order.indexOf(a[0])-order.indexOf(b[0]));
+}
+function runePatternText(entries){return entries.map(([color,n])=>n+' '+color+(color==='empty'?' socket':' rune')+(n>1?'s':'')).join(' + ');}
+function renderActiveEffects(){
+ const container=document.getElementById('active-effects');container.replaceChildren();
+ const matches=new Map();
+ for(const c of connections){const key=connectionKey(c);if(!key||!comboDefinitions[key])continue;if(!matches.has(key))matches.set(key,[]);matches.get(key).push(c.name);}
+ if(!matches.size){const message=document.createElement('p');message.className='note';message.textContent='No upgraded effect for '+characterClasses[activeClass]+': no saved combo definition matches the connected runes.';container.append(message);return;}
+ for(const [key,names] of matches){
+  const item=document.createElement('div');item.className='active-combo';item.style.cssText='padding:16px 0;border-bottom:1px solid #424945';
+  const entries=sortedRuneCounts(key.split('|')[1].split(','));
+  const heading=document.createElement('div');heading.className='combo-pattern-name';heading.style.cssText='color:#d6e2d5;font-weight:600;font-size:14px';heading.textContent=runePatternText(entries);
+  const shapes=document.createElement('div');shapes.className='combo-rune-shapes';shapes.setAttribute('role','img');shapes.setAttribute('aria-label',runePatternText(entries));shapes.style.cssText='display:flex;align-items:center;gap:8px;margin:10px 0 12px;flex-wrap:wrap';
+  entries.forEach(([color,n],groupIndex)=>{
+   if(groupIndex){const plus=document.createElement('span');plus.textContent='+';plus.setAttribute('aria-hidden','true');plus.style.color='#a89e8b';shapes.append(plus);}
+   const group=document.createElement('div');group.dataset.runeColor=color;group.style.cssText='display:flex;gap:4px';
+   for(let i=0;i<n;i++){const badge=document.createElement('span');badge.dataset.runeIcon=color;badge.title=color+' rune';badge.style.cssText='display:inline-flex;width:42px;height:42px;align-items:center;justify-content:center;border:1px solid #4d5a50;border-radius:50%;background:#19211c';badge.innerHTML=`<svg width="34" height="34" viewBox="-35 -35 70 70" aria-hidden="true">${gem(colors[color])}</svg>`;group.append(badge);}
+   shapes.append(group);
+  });
+  const effect=document.createElement('p');effect.className='effect-preview';effect.textContent=comboDefinitions[key];effect.style.cssText='margin:6px 0;white-space:pre-wrap;overflow-wrap:anywhere';
+  const routes=document.createElement('p');routes.className='note';routes.style.marginTop='6px';routes.textContent='Connected through: '+names.join(', ');
+  const top=document.createElement('div');top.className='effect-top';top.append(heading,shapes);
+  const details=document.createElement('button');details.type='button';details.className='effect-details';details.textContent='Details';details.setAttribute('aria-label','Read full effect for '+runePatternText(entries));details.onclick=()=>{document.getElementById('effect-title').textContent=characterClasses[activeClass]+' — '+runePatternText(entries);document.getElementById('effect-full-text').textContent=comboDefinitions[key];document.getElementById('effect-connections').textContent='Connected through: '+names.join(', ');document.getElementById('effect-dialog').showModal();};
+  const bottom=document.createElement('div');bottom.className='effect-bottom';routes.title=routes.textContent;bottom.append(routes,details);
+  item.append(top,effect,bottom);container.append(item);
+ }
+}
+function renderCatalog(){
+ const entries=classComboCatalog[activeClass]||[];document.getElementById('catalog-title').textContent=characterClasses[activeClass]+' — Level 1 combos';
+ const content=document.getElementById('catalog-content');content.replaceChildren();
+ if(!entries.length){const note=document.createElement('p');note.textContent='No preloaded table for this class yet. You can still save your own definitions.';content.append(note);}
+ for(const entry of entries){const row=document.createElement('section');row.style.cssText='padding:14px 0;border-bottom:1px solid #424945';const title=document.createElement('h3');title.textContent=entry.name;title.style.cssText='margin:0 0 6px;font-size:16px;color:#d6e2d5';const pattern=document.createElement('p');pattern.textContent=runePatternText(sortedRuneCounts(entry.colors));pattern.style.cssText='margin:4px 0;font-size:12px;color:#a89e8b';const description=document.createElement('p');description.textContent=entry.description;description.style.cssText='margin:6px 0;font-size:13px';row.append(title,pattern,description);content.append(row);}
+ for(const text of classComboNotes[activeClass]||[]){const note=document.createElement('p');note.className='note';note.textContent=text;content.append(note);}
+}
+document.getElementById('open-catalog').onclick=()=>{renderCatalog();document.getElementById('catalog-dialog').showModal();};
+document.getElementById('catalog-close').onclick=()=>document.getElementById('catalog-dialog').close();
+function renderCombo(){
+ document.getElementById('open-catalog').textContent='Class combo library ('+(classComboCatalog[activeClass]||[]).length+')';
+ const c=connections.find(c=>c.id===document.getElementById('combo-select').value);
+ const runes=c.slots.map(id=>state.runes[id]);
+ document.getElementById('combo-slots').replaceChildren(...c.slots.map(id=>{
+  const s=sockets.find(s=>s.id===id),r=state.runes[id],row=document.createElement('div');
+  row.style.cssText='display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #38362c;font-size:12px';
+  const name=document.createElement('span');name.textContent=s.name;
+  const value=document.createElement('span');value.textContent=r.color?r.color+' · Lv '+r.level:'Empty';value.style.color=r.color?colors[r.color]:'#a89e8b';
+  row.append(name,value);return row;
+ }));
+ const pattern=runePatternText(sortedRuneCounts(runes.map(r=>r.color))); 
+ document.getElementById('combo-summary').textContent='Current pattern: '+pattern+'.';
+ const key=definitionKey(),effect=key?comboDefinitions[key]:null;
+ document.getElementById('combo-effect').textContent=effect||'No definition saved for '+characterClasses[activeClass]+' ('+pattern+'). Enter its upgraded skill or effect below.';
+ document.getElementById('effect-description').value=effect||'';
+ document.getElementById('save-definition').disabled=!key;
+ document.getElementById('delete-definition').disabled=!effect;
+ document.getElementById('definition-status').textContent=key?(effect?'Saved for '+characterClasses[activeClass]+' on any matching connection.':'No definition saved for '+characterClasses[activeClass]+'.'):'Fill all three sockets to define this combo.';renderActiveEffects();
+}
+document.getElementById('class-select').value=activeClass;
+document.getElementById('class-select').addEventListener('change',e=>{activeClass=e.target.value;try{localStorage.setItem('rune-class-v1',activeClass);}catch(error){}renderCombo();});
+document.getElementById('combo-select').addEventListener('change',renderCombo);
+document.getElementById('save-definition').onclick=()=>{const key=definitionKey(),text=document.getElementById('effect-description').value.trim();if(!key||!text){document.getElementById('definition-status').textContent='Fill all three sockets and enter an effect description.';return;}comboDefinitions[key]=text;disabledDefinitions.delete(key);const saved=saveDefinitions();renderCombo();document.getElementById('definition-status').textContent=saved?'Saved for '+characterClasses[activeClass]+'. Activates on any matching connection.':'Definition kept for this session only. Browser storage unavailable; export to keep it.';};
+document.getElementById('delete-definition').onclick=()=>{const key=definitionKey();if(key&&comboDefinitions[key]&&confirm('Delete the '+characterClasses[activeClass]+' definition for this rune-color combination on all connections?')){delete comboDefinitions[key];if(Object.hasOwn(builtInDefinitions,key))disabledDefinitions.add(key);const saved=saveDefinitions();renderCombo();document.getElementById('definition-status').textContent=saved?'Definition deleted.':'Removed for this session; browser storage unavailable.';}};
+render();persist();
+</script></body></html>
